@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: postgr
+    image: postgres:15.1-alpine
+    environment:
+        POSTGRES_DB: "fastapi_database"
+        POSTGRES_PASSWORD: "password"
+    ports:
+      - "5433:5432"
+    networks:
+      - api_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d fastapi_database -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  ylab:
+    container_name: ylab
+    build:
+      context: .
+    command: "uvicorn main:app --reload --host 0.0.0.0"
+    ports:
+      - "8000:8000"
+    networks:
+      - api_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  api_network:
+    name: api_network

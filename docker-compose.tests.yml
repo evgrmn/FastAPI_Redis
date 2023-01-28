@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  test_app:
+    container_name: test_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #environment:
+    command: pytest
+    networks:
+      - test_network
+
+networks:
+  test_network:
+    external:
+      name: api_network
