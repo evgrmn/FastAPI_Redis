@@ -15,6 +15,7 @@ _services._add_tables()
 
 @app.get("/api/v1/menus", response_model=List[_schemas.Menu], summary="Get menu list")
 async def get_menus():
+
     return await _services.get_instances(model=_models.Menu, schema=_schemas.Menu)
 
 
