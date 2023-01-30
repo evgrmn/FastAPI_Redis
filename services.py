@@ -1,7 +1,13 @@
 import fastapi as _fastapi
 import models as _models
 import schemas as _schemas
-from cache_functions import cache_create, cache_delete, cache_update, cache_get, cache_delete_cascade
+from cache_functions import (
+    cache_create,
+    cache_delete,
+    cache_update,
+    cache_get,
+    cache_delete_cascade,
+)
 
 
 def _add_tables():
@@ -17,7 +23,6 @@ async def get_instances(model: _models, schema: _schemas, **filter):
 
 async def get_instance(model: _models, schema: _schemas, **filter):
     print(filter)
-    
 
     key_cach_name = f"{model.__name__}_{filter['id']}"
     res = await cache_get(key_cach_name)
@@ -107,7 +112,9 @@ async def create_dish(dish: _schemas.HandleDish, **filter):
 
 
 async def delete_dish(dish: _schemas.Delete, **filter):
-    key_cach_name = f"Menu_{filter['menu_id']}_SubMenu_{filter['submenu_id']}_Dish_{filter['id']}"
+    key_cach_name = (
+        f"Menu_{filter['menu_id']}_SubMenu_{filter['submenu_id']}_Dish_{filter['id']}"
+    )
     _models.count_submenu_and_dishes(filter["menu_id"], -1, None, filter["submenu_id"])
     tmp = filter.copy()
     del tmp["menu_id"]

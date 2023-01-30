@@ -80,7 +80,9 @@ async def create_submenu(
 
 
 @app.delete(
-    "/api/v1/menus/{menu_id}/submenus/{submenu_id}", response_model=_schemas.Delete
+    "/api/v1/menus/{menu_id}/submenus/{submenu_id}",
+    response_model=_schemas.Delete,
+    summary="Delete submenu",
 )
 async def delete_submenu(
     menu_id: int = Path(),
@@ -92,7 +94,11 @@ async def delete_submenu(
     )
 
 
-@app.get("/api/v1/menus/{menu_id}/submenus", response_model=List[_schemas.SubMenu])
+@app.get(
+    "/api/v1/menus/{menu_id}/submenus",
+    response_model=List[_schemas.SubMenu],
+    summary="Get submenu list",
+)
 async def get_submenus(
     menu_id: int = Path(),
 ):
@@ -103,7 +109,9 @@ async def get_submenus(
 
 
 @app.get(
-    "/api/v1/menus/{menu_id}/submenus/{submenu_id}", response_model=_schemas.SubMenu
+    "/api/v1/menus/{menu_id}/submenus/{submenu_id}",
+    response_model=_schemas.SubMenu,
+    summary="Get submenu",
 )
 async def get_submenu(
     menu_id: int = Path(),
@@ -116,7 +124,9 @@ async def get_submenu(
 
 
 @app.patch(
-    "/api/v1/menus/{menu_id}/submenus/{submenu_id}", response_model=_schemas.Common
+    "/api/v1/menus/{menu_id}/submenus/{submenu_id}",
+    response_model=_schemas.Common,
+    summary="Update submenu",
 )
 async def update_submenu(
     data: _schemas.Common,
@@ -133,6 +143,7 @@ async def update_submenu(
     "/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes",
     response_model=_schemas.Dish,
     status_code=201,
+    summary="Create a new dish",
 )
 async def create_dish(
     dish: _schemas.HandleDish,
@@ -148,6 +159,7 @@ async def create_dish(
 @app.get(
     "/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes",
     response_model=List[_schemas.Dish],
+    summary="Get dish list",
 )
 async def get_dishes(
     menu_id: int = Path(),
@@ -162,6 +174,7 @@ async def get_dishes(
 @app.get(
     "/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}",
     response_model=_schemas.Dish,
+    summary="Get dish",
 )
 async def get_dish(
     menu_id: int = Path(),
@@ -177,6 +190,7 @@ async def get_dish(
 @app.delete(
     "/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}",
     response_model=_schemas.Delete,
+    summary="Delete dish",
 )
 async def delete_dish(
     menu_id: int = Path(),
@@ -192,6 +206,7 @@ async def delete_dish(
 @app.patch(
     "/api/v1/menus/{menu_id}/submenus/{submenu_id}/dishes/{dish_id}",
     response_model=_schemas.HandleDish,
+    summary="Update dish",
 )
 async def update_dish(
     data: _schemas.HandleDish,

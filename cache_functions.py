@@ -1,7 +1,8 @@
 import aioredis
 import json
+from config import Config
 
-redis = aioredis.from_url("redis://redis")
+redis = aioredis.from_url(f"redis://{Config.REDIS_ADDRESS}")
 
 
 async def cache_create(name, data):

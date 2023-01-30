@@ -1,7 +1,8 @@
 from vars import Variables as var
 
 import sys
-sys.path.append('..')
+
+sys.path.append("..")
 import httpx
 import pytest
 import pytest_asyncio
@@ -10,28 +11,29 @@ from importlib import reload
 from config import Config
 
 
-'''Создание тестовой базы данных'''
-#Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433'
-Config.DATABASE_URL = 'postgresql://postgres:password@postgres:5432'
+"""Создание тестовой базы данных"""
+# Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433'
+Config.DATABASE_URL = f"postgresql://postgres:password@{Config.DATABASE_ADDRESS}"
 import models as _models
+
 try:
     with _models.engine.connect() as connection:
         connection.execute(text("COMMIT"))
-        connection.execute(text('CREATE DATABASE test'))
+        connection.execute(text("CREATE DATABASE test"))
 except Exception as err:
     print(err)
-#Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433/test'
-Config.DATABASE_URL = 'postgresql://postgres:password@postgres:5432/test'
+# Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433/test'
+Config.DATABASE_URL = f"postgresql://postgres:password@{Config.DATABASE_ADDRESS}"
 _models = reload(_models)
 
-'''Создание таблиц в базе test '''
+"""Создание таблиц в базе test """
 _models.Base.metadata.create_all(bind=_models.engine)
 with _models.engine.connect() as connection:
     connection.execute(text("COMMIT"))
-    connection.execute(text('DELETE FROM menu;DELETE FROM submenu;DELETE FROM dish;'))
+    connection.execute(text("DELETE FROM menu;DELETE FROM submenu;DELETE FROM dish;"))
 
 
-#url = "http://localhost:8000/api/v1/menus"
+# url = "http://localhost:8000/api/v1/menus"
 url = "http://ylab:8000/api/v1/menus"
 
 
