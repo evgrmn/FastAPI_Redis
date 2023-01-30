@@ -11,7 +11,8 @@ from config import Config
 
 
 '''Создание тестовой базы данных'''
-Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433'
+#Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433'
+Config.DATABASE_URL = 'postgresql://postgres:password@ylab:5432'
 import models as _models
 try:
     with _models.engine.connect() as connection:
@@ -19,7 +20,8 @@ try:
         connection.execute(text('CREATE DATABASE test'))
 except Exception as err:
     print(err)
-Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433/test'
+#Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433/test'
+Config.DATABASE_URL = 'postgresql://postgres:password@ylab:5432/test'
 _models = reload(_models)
 
 '''Создание таблиц в базе test '''
@@ -29,8 +31,8 @@ with _models.engine.connect() as connection:
     connection.execute(text('DELETE FROM menu;DELETE FROM submenu;DELETE FROM dish;'))
 
 
-url = "http://localhost:8000/api/v1/menus"
-#url = "http://ylab:8000/api/v1/menus"
+#url = "http://localhost:8000/api/v1/menus"
+url = "http://ylab:8000/api/v1/menus"
 
 
 pytestmark = pytest.mark.asyncio
