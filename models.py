@@ -4,8 +4,11 @@ import sqlalchemy.orm as _orm
 import fastapi as _fastapi
 import schemas as _schemas
 
+from config import Config
 
-DATABASE_URL = "postgresql://postgres:password@localhost:5433/fastapi_database"
+print(Config.DATABASE_URL)
+
+DATABASE_URL = Config.DATABASE_URL
 engine = _sql.create_engine(DATABASE_URL)
 SessionLocal = _orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = _declarative.declarative_base()
