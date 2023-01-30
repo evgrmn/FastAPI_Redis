@@ -62,6 +62,7 @@ def count_submenu_and_dishes(menu_id, addition, dishes_count=None, submenu_id=No
         menu.submenus_count += addition
     if dishes_count:
         menu.dishes_count -= dishes_count
+    submenu = None
     if submenu_id:
         try:
             submenu = get_instance(
