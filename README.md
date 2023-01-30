@@ -25,6 +25,7 @@
 - Скачать файлы
 - Желательно создать виртуальное окружение venv
 - Скачать образы из Docker Hub:
+
     docker pull python:3.10-slim
     docker pull postgres:15.1-alpine
     docker pull redis:latest
