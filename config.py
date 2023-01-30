@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class Config:
     """
     Run app from localhost (container 'redis' and 'postgr' are running)
@@ -12,7 +15,7 @@ class Config:
         or
         docker-compose up --build
     """
-    DATABASE_ADDRESS = "postgres:5432"
-    REDIS_ADDRESS = "redis"
+    DATABASE_ADDRESS = 'postgres:5432'
+    REDIS_ADDRESS = 'redis'
     """Database url"""
-    DATABASE_URL = f"postgresql://postgres:password@{DATABASE_ADDRESS}/fastapi_database"
+    DATABASE_URL = f'postgresql://postgres:password@{DATABASE_ADDRESS}/fastapi_database'

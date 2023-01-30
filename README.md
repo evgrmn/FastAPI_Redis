@@ -29,7 +29,7 @@
     docker pull python:3.10-slim
 
     docker pull postgres:15.1-alpine
-    
+
     docker pull redis:latest
 
 ## Запуск приложения

@@ -1,8 +1,12 @@
-import aioredis
+from __future__ import annotations
+
 import json
+
+import aioredis
+
 from config import Config
 
-redis = aioredis.from_url(f"redis://{Config.REDIS_ADDRESS}")
+redis = aioredis.from_url(f'redis://{Config.REDIS_ADDRESS}')
 
 
 async def cache_create(name, data):
@@ -20,7 +24,7 @@ async def cache_delete(name):
 
 
 async def cache_update(name, data):
-    key_list = await redis.keys(f"*{name}")
+    key_list = await redis.keys(f'*{name}')
     if key_list:
         name = key_list[0]
         res = json.loads(await redis.get(name))
@@ -29,7 +33,7 @@ async def cache_update(name, data):
 
 
 async def cache_get(name):
-    key_list = await redis.keys(f"*{name}")
+    key_list = await redis.keys(f'*{name}')
     if key_list:
         name = key_list[0]
         res = await redis.get(name)
