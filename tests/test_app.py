@@ -12,7 +12,7 @@ from config import Config
 
 '''Создание тестовой базы данных'''
 #Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433'
-Config.DATABASE_URL = 'postgresql://postgres:password@ylab:5432'
+Config.DATABASE_URL = 'postgresql://postgres:password@postgres:5432'
 import models as _models
 try:
     with _models.engine.connect() as connection:
@@ -21,7 +21,7 @@ try:
 except Exception as err:
     print(err)
 #Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433/test'
-Config.DATABASE_URL = 'postgresql://postgres:password@ylab:5432/test'
+Config.DATABASE_URL = 'postgresql://postgres:password@postgres:5432/test'
 _models = reload(_models)
 
 '''Создание таблиц в базе test '''
