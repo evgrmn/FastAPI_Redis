@@ -14,13 +14,7 @@ def _add_tables():
 
 
 async def get_instances(model: _models, schema: _schemas, **filter):
-    #name = f"{model.__name__}_list"
-    #res = await cache_get(name)
-    #if res:
-    #    return res
     instances = _models.get_instances(model=model, schema=schema, filter=filter)
-    #await cache_create(name, list(map(dict, instances)))
-    print('not from cache')
 
     return instances
 
@@ -40,7 +34,6 @@ async def get_instance(model: _models, schema: _schemas, **filter):
             status_code=404, detail=f"{str(model.__tablename__)} not found"
         )
     await cache_create(name, instance.dict())
-    print('not from cache')
 
     return instance
 
