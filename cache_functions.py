@@ -1,7 +1,7 @@
 import aioredis
 import json
 
-redis = aioredis.from_url("redis://")
+redis = aioredis.from_url("redis://redis")
 
 
 async def cache_create(name, data):
@@ -12,7 +12,7 @@ async def cache_delete_cascade(name):
     key_list = await redis.keys(name)
     if key_list:
         await redis.delete(*key_list)
-        
+
 
 async def cache_delete(name):
     await redis.delete(name)
