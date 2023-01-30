@@ -1,13 +1,13 @@
 class Config:
     """
-    Start app from localhost (container 'redis' and 'postgr' are running)
+    Run app from localhost (container 'redis' and 'postgr' are running)
         uvicorn main:app --reload
     """
 
     # DATABASE_ADDRESS = 'localhost:5433'
     # REDIS_ADDRESS = 'localhost'
     """
-    Start app from docker container
+    Run app from docker container
         docker-compose up
         or
         docker-compose up --build
