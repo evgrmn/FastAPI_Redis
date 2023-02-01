@@ -23,6 +23,9 @@ _services._add_tables()
     summary='Get menu list',
 )
 async def get_menus():
+    """
+    Получение списка меню.
+    """
 
     return await _services.get_instances(
         model=_models.Menu,
@@ -39,6 +42,9 @@ async def get_menus():
 async def create_menu(
     menu: _schemas.Common,
 ):
+    """
+    Создание меню. 'title' - название меню, 'description' - описание меню
+    """
 
     return await _services.create_menu(menu=menu)
 
@@ -51,6 +57,10 @@ async def create_menu(
 async def delete_menu(
     menu_id: int = Path(),
 ):
+    """
+    Удаление меню. 'menu_id' - id в таблице 'menu'.
+    Удаление меню удалит все связанные с ним подменю и блюда.
+    """
 
     return await _services.delete_menu(menu=_schemas.Delete, id=menu_id)
 
@@ -63,6 +73,9 @@ async def delete_menu(
 async def get_menu(
     menu_id: int = Path(),
 ):
+    """
+    Получение определенного меню. 'menu_id' - id меню в таблице 'menu'
+    """
 
     return await _services.get_instance(
         model=_models.Menu,
@@ -80,6 +93,11 @@ async def update_menu(
     data: _schemas.Common,
     menu_id: int = Path(),
 ):
+    """
+    Обновление определенного.
+    'menu_id' - id в таблице 'menu',
+    'title' - название меню, 'description' - описание меню
+    """
 
     return await _services.update_instance(
         model=_models.Menu,
@@ -99,6 +117,11 @@ async def create_submenu(
     submenu: _schemas.Common,
     menu_id: int = Path(),
 ):
+    """
+    Создание нового подменю.
+    'menu_id' - id меню в таблице 'menu',
+    'title' - название подменю, 'description' - описание подменю
+    """
 
     return await _services.create_submenu(submenu=submenu, menu_id=menu_id)
 
@@ -112,6 +135,12 @@ async def delete_submenu(
     menu_id: int = Path(),
     submenu_id: int = Path(),
 ):
+    """
+    Удаление определенного подменю.
+    'menu_id' - id меню в таблице 'menu',
+    'submenu_id' - id подменю в таблице 'submenu'.
+    Удаление подменю удалит все его блюда.
+    """
 
     return await _services.delete_submenu(
         menu=_schemas.Delete,
@@ -128,6 +157,10 @@ async def delete_submenu(
 async def get_submenus(
     menu_id: int = Path(),
 ):
+    """
+    Получение списка всех подменю, которые входят в состав определенного меню.
+    'menu_id' - id меню в таблице 'menu'.
+    """
 
     return await _services.get_instances(
         model=_models.SubMenu,
@@ -145,6 +178,12 @@ async def get_submenu(
     menu_id: int = Path(),
     submenu_id: int = Path(),
 ):
+    """
+    Получение определенного подменю.
+    'menu_id' - id меню, с которым связано
+    требуемое подменю, в таблице 'menu',
+    'submenu_id' - id требуемого подменю в таблице 'submenu'.
+    """
 
     return await _services.get_instance(
         model=_models.SubMenu,
@@ -164,6 +203,13 @@ async def update_submenu(
     menu_id: int = Path(),
     submenu_id: int = Path(),
 ):
+    """
+    Обновление определенного подменю.
+    'menu_id' - id меню, с которым связано
+    требуемое подменю, в таблице 'menu',
+    'submenu_id' - id требуемого подменю в таблице 'submenu'.
+    'title' - новое название поменю, 'description' - новое описание меню
+    """
 
     return await _services.update_instance(
         model=_models.SubMenu,
@@ -184,6 +230,13 @@ async def create_dish(
     menu_id: int = Path(),
     submenu_id: int = Path(),
 ):
+    """
+    Создание нового блюда.
+    'menu_id' - id меню, с которым связано подменю данного блюда,
+    'submenu_id' - id подменю данного блюда.
+    'title' - название блюда, 'description' - описание блюда,
+    'price' - цена блюда
+    """
 
     return await _services.create_dish(
         dish=dish,
@@ -201,6 +254,11 @@ async def get_dishes(
     menu_id: int = Path(),
     submenu_id: int = Path(),
 ):
+    """
+    Получение списка блюд.
+    'menu_id' - id меню, с которым связано подменю данного блюда,
+    'submenu_id' - id подменю данного блюда.
+    """
 
     return await _services.get_instances(
         model=_models.Dish,
@@ -219,6 +277,12 @@ async def get_dish(
     submenu_id: int = Path(),
     dish_id: int = Path(),
 ):
+    """
+    Получение определенного блюда.
+    'menu_id' - id меню, с которым связано подменю данного блюда,
+    'submenu_id' - id подменю данного блюда.
+    'dish_id' - id требуемого блюда.
+    """
 
     return await _services.get_instance(
         model=_models.Dish,
@@ -238,6 +302,12 @@ async def delete_dish(
     submenu_id: int = Path(),
     dish_id: int = Path(),
 ):
+    """
+    Удаление определенного блюда.
+    'menu_id' - id меню, с которым связано подменю удаляемого блюда,
+    'submenu_id' - id подменю удаляемого блюда.
+    'dish_id' - id удаляемого блюда.
+    """
 
     return await _services.delete_dish(
         dish=_schemas.Delete,
@@ -258,6 +328,14 @@ async def update_dish(
     submenu_id: int = Path(),
     dish_id: int = Path(),
 ):
+    """
+    Обновление определенного блюда.
+    'menu_id' - id меню, с которым связано подменю блюда,
+    'submenu_id' - id подменю блюда.
+    'dish_id' - id блюда.
+    'title' - новое название блюда, 'description' - новое описание блюда,
+    'price' - новая цена блюда
+    """
 
     return await _services.update_instance(
         model=_models.Dish,
