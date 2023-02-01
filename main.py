@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 import fastapi as _fastapi
 from fastapi import Path
 
@@ -9,7 +7,6 @@ import description
 import models as _models
 import schemas as _schemas
 import services as _services
-
 
 app = _fastapi.FastAPI(
     title='FastAPI Application',
@@ -20,10 +17,17 @@ app = _fastapi.FastAPI(
 _services._add_tables()
 
 
-@app.get('/api/v1/menus', response_model=list[_schemas.Menu], summary='Get menu list')
+@app.get(
+    '/api/v1/menus',
+    response_model=list[_schemas.Menu],
+    summary='Get menu list',
+)
 async def get_menus():
 
-    return await _services.get_instances(model=_models.Menu, schema=_schemas.Menu)
+    return await _services.get_instances(
+        model=_models.Menu,
+        schema=_schemas.Menu,
+    )
 
 
 @app.post(
@@ -51,7 +55,11 @@ async def delete_menu(
     return await _services.delete_menu(menu=_schemas.Delete, id=menu_id)
 
 
-@app.get('/api/v1/menus/{menu_id}', response_model=_schemas.Menu, summary='Get menu')
+@app.get(
+    '/api/v1/menus/{menu_id}',
+    response_model=_schemas.Menu,
+    summary='Get menu',
+)
 async def get_menu(
     menu_id: int = Path(),
 ):

@@ -2,4 +2,4 @@ venv/
 __pycache__/
 tests/__pycache__/
 old/
-readme
+readme.txt

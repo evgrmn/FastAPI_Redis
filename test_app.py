@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from importlib import reload
 
 import httpx
@@ -8,48 +7,54 @@ import pytest
 import pytest_asyncio
 from sqlalchemy import text
 
+#from config import Config
 import models as _models
-from config import Config
+from main import app
 from vars import Variables as var
 
-sys.path.append('..')
+#import sys
+#sys.path.append('..')
 
 
-"""Создание тестовой базы данных"""
-# Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433'
-Config.DATABASE_URL = f'postgresql://postgres:password@{Config.DATABASE_ADDRESS}'
 
-try:
-    with _models.engine.connect() as connection:
-        connection.execute(text('COMMIT'))
-        connection.execute(text('CREATE DATABASE test'))
-except Exception as err:
-    print(err)
-# Config.DATABASE_URL = 'postgresql://postgres:password@localhost:5433/test'
-Config.DATABASE_URL = f'postgresql://postgres:password@{Config.DATABASE_ADDRESS}'
-_models = reload(_models)
-
-"""Создание таблиц в базе test """
-_models.Base.metadata.create_all(bind=_models.engine)
-with _models.engine.connect() as connection:
-    connection.execute(text('COMMIT'))
-    connection.execute(
-        text('DELETE FROM menu;DELETE FROM submenu;DELETE FROM dish;'),
-    )
-
-
-# url = "http://localhost:8000/api/v1/menus"
-url = 'http://ylab:8000/api/v1/menus'
 
 
 pytestmark = pytest.mark.asyncio
 
 
+"""Создание таблиц в базе test """
+_models.Base.metadata.create_all(bind=_models.engine)
+
+
+'''"""Очистка таблиц, если они уже были созданы"""
+with _models.engine.connect() as connection:
+    print('yes')
+    connection.execute(text('COMMIT'))
+    connection.execute(
+        text('DELETE FROM menu;DELETE FROM submenu;DELETE FROM dish;'),
+    )'''
+
+
 @pytest_asyncio.fixture
 async def client():
-    cl = httpx.AsyncClient()
+    cl = httpx.AsyncClient(app=app)
     yield cl
     await cl.aclose()
+
+
+url = 'http://test/api/v1/menus'
+
+
+'''async def test_1(client):
+    r = await client.get(url)
+    
+    assert r.status_code == 200, 'wrong response'
+
+
+async def test_2(client):
+    r = await client.get(url)
+    assert r.status_code == 200, 'wrong response'
+    assert len(r.json()) == 0, 'table "menu" must be empty' '''
 
 
 async def test_1(client):

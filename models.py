@@ -5,19 +5,16 @@ import sqlalchemy as _sql
 import sqlalchemy.ext.declarative as _declarative
 import sqlalchemy.orm as _orm
 
-import schemas as _schemas
 from config import Config
 
-print(Config.DATABASE_URL)
-
-DATABASE_URL = Config.DATABASE_URL
+DATABASE_URL = Config.DB_URL
 engine = _sql.create_engine(DATABASE_URL)
 SessionLocal = _orm.sessionmaker(
     autocommit=False,
     autoflush=False,
     bind=engine,
 )
-Base = _declarative.declarative_base()
+Base: _declarative = _declarative.declarative_base()
 
 
 class Menu(Base):
@@ -70,10 +67,15 @@ def get_db():
 db = next(get_db())
 
 
-def count_submenu_and_dishes(menu_id, addition, dishes_count=None, submenu_id=None):
+def count_submenu_and_dishes(
+    menu_id,
+    addition,
+    dishes_count=None,
+    submenu_id=None,
+):
     try:
         menu = get_instance(model=Menu, filter={'id': menu_id})
-    except:
+    except Exception:
         raise _fastapi.HTTPException(status_code=404, detail='menu not found')
     if not submenu_id:
         menu.submenus_count += addition
@@ -86,7 +88,7 @@ def count_submenu_and_dishes(menu_id, addition, dishes_count=None, submenu_id=No
                 model=SubMenu,
                 filter={'id': submenu_id, 'menu_id': menu_id},
             )
-        except:
+        except Exception:
             raise _fastapi.HTTPException(
                 status_code=404,
                 detail='submenu not found',
@@ -102,7 +104,7 @@ def get_instance(model, filter):
     return db.query(model).filter_by(**filter).one()
 
 
-def get_instances(model, schema: _schemas, filter):
+def get_instances(model, schema, filter):
 
     return list(map(schema.from_orm, db.query(model).filter_by(**filter)))
 
@@ -120,10 +122,8 @@ def delete_instance(model, **filter):
     db.delete(delete)
     db.commit()
 
-    try:
+    if 'submenu_id' not in filter['filter']:
         return delete.dishes_count
-    except:
-        pass
 
 
 def update_instance(model, data, filter):

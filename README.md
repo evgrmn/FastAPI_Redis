@@ -42,10 +42,10 @@
 
 ## Запуск Pytest
 
-Создание контейнера для тестирования и запуск Pytest:
+Создание контейнеров для тестирования и запуск Pytest:
 
 - docker-compose -f docker-compose.tests.yml up
 
 Перезапуск тестового сценария:
 
-- docker start -ai test_app
+- docker start -ai test_ylab

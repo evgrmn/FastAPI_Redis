@@ -4,11 +4,10 @@ import fastapi as _fastapi
 
 import models as _models
 import schemas as _schemas
-from cache_functions import cache_create
-from cache_functions import cache_delete
-from cache_functions import cache_delete_cascade
-from cache_functions import cache_get
-from cache_functions import cache_update
+from cache_functions import (
+    cache_create, cache_delete, cache_delete_cascade,
+    cache_get, cache_update,
+)
 
 
 def _add_tables():
@@ -16,7 +15,7 @@ def _add_tables():
     return _models.Base.metadata.create_all(bind=_models.engine)
 
 
-async def get_instances(model: _models, schema: _schemas, **filter):
+async def get_instances(model, schema, **filter):
     instances = _models.get_instances(
         model=model,
         schema=schema,
@@ -26,18 +25,17 @@ async def get_instances(model: _models, schema: _schemas, **filter):
     return instances
 
 
-async def get_instance(model: _models, schema: _schemas, **filter):
-    print(filter)
-
+async def get_instance(model, schema, **filter):
     key_cach_name = f"{model.__name__}_{filter['id']}"
     res = await cache_get(key_cach_name)
+
     if res:
         return res
     try:
         instance = schema.from_orm(
             _models.get_instance(model=model, filter=filter),
         )
-    except:
+    except Exception:
         raise _fastapi.HTTPException(
             status_code=404,
             detail=f'{str(model.__tablename__)} not found',
@@ -48,8 +46,8 @@ async def get_instance(model: _models, schema: _schemas, **filter):
 
 
 async def update_instance(
-    model: _models,
-    schema: _schemas,
+    model,
+    schema,
     data: _schemas.Common,
     **filter,
 ):
@@ -73,10 +71,10 @@ async def create_menu(menu: _schemas.Common):
     return menu
 
 
-async def delete_menu(menu: _schemas.Delete, **filter):
+async def delete_menu(menu, **filter):
     try:
         _models.delete_instance(_models.Menu, filter=filter)
-    except:
+    except Exception:
         raise _fastapi.HTTPException(status_code=404, detail='menu not found')
     menu.status = True
     menu.message = 'The menu has been deleted'
@@ -89,16 +87,19 @@ async def create_submenu(submenu: _schemas.Common, **filter):
     _models.count_submenu_and_dishes(filter['menu_id'], 1)
     _models.add_instance(submenu)
     key_cach_name = f"Menu_{filter['menu_id']}_SubMenu_{submenu.id}"
-    await cache_create(key_cach_name, _schemas.SubMenu.from_orm(submenu).dict())
+    await cache_create(
+        key_cach_name,
+        _schemas.SubMenu.from_orm(submenu).dict(),
+    )
     await cache_delete(f"Menu_{filter['menu_id']}")
 
     return _schemas.SubMenu.from_orm(submenu)
 
 
-async def delete_submenu(menu: _schemas.Delete, **filter):
+async def delete_submenu(menu, **filter):
     try:
         dishes_count = _models.delete_instance(_models.SubMenu, filter=filter)
-    except:
+    except Exception:
         raise _fastapi.HTTPException(
             status_code=404,
             detail='submenu not found',
@@ -128,15 +129,16 @@ async def create_dish(dish: _schemas.HandleDish, **filter):
     key_cach_name += f'_Dish_{dish.id}'
     await cache_create(key_cach_name, _schemas.Dish.from_orm(dish).dict())
     await cache_delete(f"Menu_{filter['menu_id']}")
-    await cache_delete(f"Menu_{filter['menu_id']}_SubMenu_{filter['submenu_id']}")
+    await cache_delete(
+        f"Menu_{filter['menu_id']}_SubMenu_{filter['submenu_id']}",
+    )
 
     return _schemas.Dish.from_orm(dish)
 
 
-async def delete_dish(dish: _schemas.Delete, **filter):
-    key_cach_name = (
-        f"Menu_{filter['menu_id']}_SubMenu_{filter['submenu_id']}_Dish_{filter['id']}"
-    )
+async def delete_dish(dish, **filter):
+    key_cach_name = f"Menu_{filter['menu_id']}_SubMenu_{filter['submenu_id']}"
+    key_cach_name += f"_Dish_{filter['id']}"
     _models.count_submenu_and_dishes(
         filter['menu_id'],
         -1,
@@ -147,13 +149,18 @@ async def delete_dish(dish: _schemas.Delete, **filter):
     del tmp['menu_id']
     try:
         _models.delete_instance(_models.Dish, filter=tmp)
-    except:
+    except Exception:
         _models.rollback()
-        raise _fastapi.HTTPException(status_code=404, detail='dish not found')
+        raise _fastapi.HTTPException(
+            status_code=404,
+            detail='dish not found',
+        )
     dish.status = True
     dish.message = 'The dish has been deleted'
     await cache_delete(key_cach_name)
     await cache_delete(f"Menu_{filter['menu_id']}")
-    await cache_delete(f"Menu_{filter['menu_id']}_SubMenu_{filter['submenu_id']}")
+    await cache_delete(
+        f"Menu_{filter['menu_id']}_SubMenu_{filter['submenu_id']}",
+    )
 
     return _schemas.Delete.from_orm(dish)
