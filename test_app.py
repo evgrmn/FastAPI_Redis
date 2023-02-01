@@ -1,31 +1,18 @@
 from __future__ import annotations
 
-from importlib import reload
-
 import httpx
 import pytest
 import pytest_asyncio
-from sqlalchemy import text
 
 import models as _models
-from main import app
 from config import Variables as var
-
+from main import app
 
 pytestmark = pytest.mark.asyncio
 
 
 """Создание таблиц в базе test """
 _models.Base.metadata.create_all(bind=_models.engine)
-
-
-'''"""Очистка таблиц, если они уже были созданы"""
-with _models.engine.connect() as connection:
-    print('yes')
-    connection.execute(text('COMMIT'))
-    connection.execute(
-        text('DELETE FROM menu;DELETE FROM submenu;DELETE FROM dish;'),
-    )'''
 
 
 @pytest_asyncio.fixture
@@ -36,18 +23,6 @@ async def client():
 
 
 url = 'http://test/api/v1/menus'
-
-
-'''async def test_1(client):
-    r = await client.get(url)
-    
-    assert r.status_code == 200, 'wrong response'
-
-
-async def test_2(client):
-    r = await client.get(url)
-    assert r.status_code == 200, 'wrong response'
-    assert len(r.json()) == 0, 'table "menu" must be empty' '''
 
 
 async def test_1(client):
@@ -85,10 +60,12 @@ async def test_5(client):
     assert r.json()['id'] == var.id, 'menu id is not valid'
     assert r.json()['title'] == var.title, 'menu title is not valid'
     assert r.json()[
-        'description'] == var.description, 'menu description is not valid'
+        'description'
+    ] == var.description, 'menu description is not valid'
     assert r.json()['title'] == 'menu pytest', 'menu title is not valid'
     assert r.json()[
-        'description'] == 'menu pytest', 'menu description is not valid'
+        'description'
+    ] == 'menu pytest', 'menu description is not valid'
 
 
 async def test_6(client):
@@ -144,7 +121,7 @@ async def test_13(client):
     r = await client.get(url + '/' + var.id + '/submenus/' + var.submenu_id)
     assert r.status_code == 200, 'wrong response'
     assert r.json()['id'] == var.submenu_id, 'submenu id is not valid'
-    assert r.json()['title'] == var.submenu_title, 'submenu title is not valid'
+    assert r.json()['title'] == var.submenu_title, 'submenu title`s not valid'
     assert (
         r.json()['description'] == var.submenu_description
     ), 'submenu description is not valid'
@@ -155,7 +132,7 @@ async def test_13(client):
 
 
 async def test_14(client):
-    r = await client.delete(url + '/' + var.id + '/submenus/' + var.submenu_id)
+    r = await client.delete(f'{url}/{var.id}/submenus/{var.submenu_id}')
     assert r.status_code == 200, 'submenu not found'
 
 
@@ -203,7 +180,7 @@ async def test_20(client):
 
 
 async def test_21(client):
-    r = await client.get(url + '/' + var.id + '/submenus/' + var.submenu_id + '/dishes')
+    r = await client.get(f'{url}/{var.id}/submenus/{var.submenu_id}/dishes')
     assert r.status_code == 200, 'wrong response'
     assert len(r.json()) == 0, 'table "dish" must be empty'
 
@@ -226,20 +203,21 @@ async def test_22(client):
 
 
 async def test_23(client):
-    r = await client.get(url + '/' + var.id + '/submenus/' + var.submenu_id + '/dishes')
+    r = await client.get(f'{url}/{var.id}/submenus/{var.submenu_id}/dishes')
     assert r.status_code == 200, 'wrong response'
     assert len(r.json()) != 0, 'table "dish" must not be empty'
 
 
 async def test_24(client):
     r = await client.get(
-        url + '/' + var.id + '/submenus/' + var.submenu_id + '/dishes/' + var.dish_id,
+        f'{url}/{var.id}/submenus/{var.submenu_id}/dishes/{var.dish_id}',
     )
     assert r.status_code == 200, 'wrong response'
     assert r.json()['id'] == var.dish_id, 'dish id is not valid'
     assert r.json()['title'] == var.dish_title, 'dish title is not valid'
     assert r.json()[
-        'description'] == var.dish_description, 'dish title is not valid'
+        'description'
+    ] == var.dish_description, 'dish title is not valid'
     assert r.json()['price'] == var.dish_price, 'dish price is not valid'
     assert r.json()['title'] == 'dish pytest', 'dish title is not valid'
     assert r.json()['description'] == 'dish pytest', 'dish title is not valid'
@@ -251,20 +229,20 @@ async def test_24(client):
 
 async def test_25(client):
     r = await client.delete(
-        url + '/' + var.id + '/submenus/' + var.submenu_id + '/dishes/' + var.dish_id,
+        f'{url}/{var.id}/submenus/{var.submenu_id}/dishes/{var.dish_id}',
     )
     assert r.status_code == 200, 'dish not found'
 
 
 async def test_26(client):
-    r = await client.get(url + '/' + var.id + '/submenus/' + var.submenu_id + '/dishes')
+    r = await client.get(f'{url}/{var.id}/submenus/{var.submenu_id}/dishes')
     assert r.status_code == 200, 'wrong response'
     assert len(r.json()) == 0, 'table "dish" must be empty'
 
 
 async def test_27(client):
     r = await client.delete(
-        url + '/' + var.id + '/submenus/' + var.submenu_id + '/dishes/' + var.dish_id,
+        f'{url}/{var.id}/submenus/{var.submenu_id}/dishes/{var.dish_id}',
     )
     assert r.status_code == 404, 'dish must be deleted'
 
@@ -359,7 +337,8 @@ async def test_36(client):
         r.json()['submenus_count'] == var.submenu_count
     ), 'submenus_count is not valid'
     assert r.json()[
-        'dishes_count'] == var.menu_dish_count, 'dishes_count is not valid'
+        'dishes_count'
+    ] == var.menu_dish_count, 'dishes_count is not valid'
 
 
 async def test_37(client):
@@ -367,11 +346,12 @@ async def test_37(client):
     assert r.status_code == 200, 'wrong response'
     assert r.json()['id'] == var.submenu_id, 'submenu id is not valid'
     assert r.json()[
-        'dishes_count'] == var.dish_count, 'dishes_count is not valid'
+        'dishes_count'
+    ] == var.dish_count, 'dishes_count is not valid'
 
 
 async def test_38(client):
-    r = await client.delete(url + '/' + var.id + '/submenus/' + var.submenu_id)
+    r = await client.delete(f'{url}/{var.id}/submenus/{var.submenu_id}')
     var.dish_count -= 2
     var.menu_dish_count -= 2
     var.submenu_count -= 1
@@ -385,7 +365,7 @@ async def test_39(client):
 
 
 async def test_40(client):
-    r = await client.get(url + '/' + var.id + '/submenus/' + var.submenu_id + '/dishes')
+    r = await client.get(f'{url}/{var.id}/submenus/{var.submenu_id}/dishes')
     assert r.status_code == 200, 'wrong response'
     assert len(r.json()) == 0, 'table "dish" must be empty'
 
