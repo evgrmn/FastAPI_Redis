@@ -7,16 +7,9 @@ import pytest
 import pytest_asyncio
 from sqlalchemy import text
 
-#from config import Config
 import models as _models
 from main import app
-from vars import Variables as var
-
-#import sys
-#sys.path.append('..')
-
-
-
+from config import Variables as var
 
 
 pytestmark = pytest.mark.asyncio
