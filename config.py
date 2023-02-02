@@ -12,7 +12,8 @@ class Config:
     DB_URL = os.getenv('DB_URL')
     REDIS_ADDRESS = os.getenv('REDIS_ADDRESS')
     if TESTING:
-        DB_URL = 'postgresql://postgres:password@postgres:5432/test'
+        DB_URL = 'postgresql://postgres:password@test_postgres:5432/test'
+        REDIS_ADDRESS = 'test_redis'
 
 
 class Variables:

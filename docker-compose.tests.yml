@@ -1,13 +1,13 @@
 version: '3.8'
 services:
-  postgres:
+  test_postgres:
     container_name: test_postgr
     image: postgres:15.1-alpine
     environment:
         POSTGRES_DB: "test"
         POSTGRES_PASSWORD: "password"
     ports:
-      - "5433:5432"
+      - "5434:5432"
     networks:
       - test_network
     healthcheck:
@@ -15,25 +15,26 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-  ylab:
+  test_ylab:
     container_name: test_ylab
     build:
       context: .
     env_file:
       - test.env
     command: "pytest -s -W ignore::DeprecationWarning"
+    #command: "echo $PATH"
     ports:
       - "8000:8000"
     networks:
       - test_network
     depends_on:
-      postgres:
+      test_postgres:
         condition: service_healthy
-  redis:
+  test_redis:
     container_name: test_redis
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "6380:6379"
     networks:
       - test_network
     healthcheck:
@@ -42,7 +43,7 @@ services:
       timeout: 5s
       retries: 10
     depends_on:
-      postgres:
+      test_postgres:
         condition: service_healthy
 
 networks:
